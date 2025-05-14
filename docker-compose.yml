@@ -14,6 +14,28 @@ services:
         networks:
             - laravel
 
+    reverb:
+        build:
+            context: ./docker/php
+        container_name: laravel_reverb
+        volumes:
+            - ./:/var/www
+        command: php artisan reverb:start --host=0.0.0.0 --port=51733
+        ports:
+            - "51733:51733"
+        depends_on:
+            - app
+        environment:
+            - BROADCAST_CONNECTION=reverb
+            - REVERB_APP_ID=${REVERB_APP_ID}
+            - REVERB_APP_KEY=${REVERB_APP_KEY}
+            - REVERB_APP_SECRET=${REVERB_APP_SECRET}
+            - REVERB_HOST=localhost
+            - REVERB_PORT=${REVERB_PORT}
+            - REVERB_SCHEME=${REVERB_SCHEME}
+        networks:
+            - laravel
+
     nginx:
         image: nginx:stable-alpine
         container_name: laravel_nginx
@@ -71,7 +93,7 @@ services:
         working_dir: /var/www
         volumes:
             - ./:/var/www
-        command: sh -c "yarn install && yarn dev"
+        command: sh -c "yarn install && yarn dev && npm i"
         networks:
             - laravel
 
