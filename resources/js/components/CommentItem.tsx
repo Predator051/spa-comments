@@ -22,8 +22,6 @@ export default function CommentItem(comment: Comment) {
 
     if (!node) return null;
 
-    console.log(comment.file_url);
-
     const loadChildren = async (parentId: number) => {
         const page = childPages[parentId] ?? 1;
         const response = await axios.get<Paginated<Comment>>(`/comments/${parentId}/children?page=${page}`);
@@ -39,13 +37,33 @@ export default function CommentItem(comment: Comment) {
         }));
     };
 
-    const isImage = (file: string): boolean => {
-        return /\.(jpg|jpeg|png|gif)$/i.test(file);
+    const isImage = (file: string): boolean => /\.(jpg|jpeg|png|gif)$/i.test(file);
+    const isText = (file: string): boolean => /\.(txt)$/i.test(file);
+
+    const sanitizeHtml = (html: string): string => {
+        const allowedTags = ['a', 'code', 'i', 'strong'];
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(`<div>${html}</div>`, 'text/html');
+
+        const cleanNode = (node: Node): Node => {
+            if (node.nodeType === Node.TEXT_NODE) return node.cloneNode();
+
+            if (node.nodeType === Node.ELEMENT_NODE && allowedTags.includes((node as Element).tagName.toLowerCase())) {
+                const el = node.cloneNode(false) as HTMLElement;
+                node.childNodes.forEach((child) => el.appendChild(cleanNode(child)));
+                return el;
+            }
+
+            return document.createTextNode(node.textContent || '');
+        };
+
+        const sanitized = document.createElement('div');
+        doc.body.firstChild?.childNodes.forEach((node) => sanitized.appendChild(cleanNode(node)));
+        return sanitized.innerHTML;
     };
 
     return (
-        <div key={comment.id}
-             className="rounded-2xl border bg-white p-5 shadow-sm dark:border-[#2c2c2c] dark:bg-[#1c1c1c]">
+        <div key={comment.id} className="rounded-2xl border bg-white p-5 shadow-sm dark:border-[#2c2c2c] dark:bg-[#1c1c1c]">
             <div className="flex items-start justify-between">
                 <div className="flex items-center gap-4">
                     <Avatar>
@@ -57,18 +75,30 @@ export default function CommentItem(comment: Comment) {
                 <ReplyCommentDialog comment={comment}></ReplyCommentDialog>
             </div>
 
-            <p className="mt-2 whitespace-pre-line text-sm text-gray-900 dark:text-gray-200"
-               style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}>
-                {comment.text}
-            </p>
+            <div
+                className="mt-2 text-sm text-gray-900 dark:text-gray-200"
+                style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}
+                dangerouslySetInnerHTML={{ __html: sanitizeHtml(comment.text) }}
+            ></div>
 
-            {comment.file_url && isImage(comment.file_url) && (
+            {comment.file_url && (
                 <div className="mt-3">
-                    <img
-                        src={comment.file_url}
-                        alt="comment attachment"
-                        className="max-w-xs rounded-lg border dark:border-neutral-700"
-                    />
+                    {isImage(comment.file_url) ? (
+                        <img
+                            src={comment.file_url}
+                            alt="comment attachment"
+                            className="max-w-xs rounded-lg border dark:border-neutral-700"
+                        />
+                    ) : isText(comment.file_url) ? (
+                        <a
+                            href={comment.file_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-block rounded border border-dashed border-gray-400 bg-gray-100 px-3 py-2 text-sm text-gray-800 hover:bg-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700"
+                        >
+                            📄 Открыть текстовый файл
+                        </a>
+                    ) : null}
                 </div>
             )}
 
@@ -78,8 +108,7 @@ export default function CommentItem(comment: Comment) {
                 ))}
 
                 {childPages[comment.id] !== null && (
-                    <button className="text-sm text-blue-600 hover:underline dark:text-blue-400"
-                            onClick={() => loadChildren(comment.id)}>
+                    <button className="text-sm text-blue-600 hover:underline dark:text-blue-400" onClick={() => loadChildren(comment.id)}>
                         Загрузить ещё ответы
                     </button>
                 )}

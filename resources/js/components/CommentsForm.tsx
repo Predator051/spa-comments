@@ -1,4 +1,3 @@
-// CommentForm.tsx
 import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react'
 import axios from 'axios';
 
@@ -115,6 +114,27 @@ export default function CommentForm({parent_id, onSubmit}: {parent_id?: number, 
         }
     }
 
+    const handleTagInsert = (tag: string) => {
+        const startTag = `<${tag}>`
+        const endTag = `</${tag}>`
+        const textarea = document.querySelector<HTMLTextAreaElement>('textarea[name="text"]')
+        if (!textarea) return
+
+        const start = textarea.selectionStart
+        const end = textarea.selectionEnd
+        const before = form.text.substring(0, start)
+        const middle = form.text.substring(start, end)
+        const after = form.text.substring(end)
+
+        const newText = before + startTag + middle + endTag + after
+        setForm({ ...form, text: newText })
+
+        setTimeout(() => {
+            textarea.focus()
+            textarea.setSelectionRange(start + startTag.length, start + startTag.length + middle.length)
+        }, 0)
+    }
+
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         const errs = validate()
@@ -182,6 +202,18 @@ export default function CommentForm({parent_id, onSubmit}: {parent_id?: number, 
 
                     <div>
                         <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-200">Комментарий *</label>
+
+                        <div className="mb-2 flex gap-2">
+                            {ALLOWED_TAGS.map(tag => (
+                                <button
+                                    key={tag}
+                                    type="button"
+                                    onClick={() => handleTagInsert(tag)}
+                                    className="rounded bg-neutral-200 px-2 py-1 text-sm dark:bg-neutral-700 dark:text-white"
+                                >&lt;{tag}&gt;</button>
+                            ))}
+                        </div>
+
                         <textarea
                             name="text"
                             value={form.text}
