@@ -6,6 +6,7 @@ use App\Events\CreateCommentProcessed;
 use App\Http\Requests\CreateCommentRequest;
 use App\Http\Resources\CommentResource;
 use App\Models\Comment;
+use App\Services\CommentService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -14,34 +15,33 @@ use Inertia\Response;
 
 class CommentController extends Controller
 {
-    public function index(Request $request): Response
+    public function __construct(private CommentService $commentService)
     {
-        $comments = Comment::whereNull('parent_id')
-            ->latest()
-            ->paginate(5);
 
+    }
+
+    public function index(): Response
+    {
         return Inertia::render('home', [
-            'comments' => $comments
+            'comments' => $this->commentService->getPaginatedRootComments()
         ]);
     }
 
     public function children(Comment $comment): JsonResponse
     {
-        $children = $comment->children()->latest()->paginate(4);
-        return response()->json($children);
+        return response()->json($this->commentService->getPaginatedChildrenComments($comment));
     }
 
     public function store(CreateCommentRequest $request): JsonResponse
     {
-        $commentData = $request->all();
-
-        $storePath = $request->file('attachment')?->storePublicly(path: 'attachments', options: 'public');
-        if (!empty($storePath)) {
-            $commentData['file_path'] = $storePath;
+        try {
+            $this->commentService->createComment($request->getDTO());
+            return response()->json(['message' => 'Комментарий сохранён.']);
+        } catch (\DomainException $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
+        } catch (\Throwable $e) {
+            Log::error($e->getMessage());
+            return response()->json(['message' => 'Server error.'], 500);
         }
-
-        $comment = Comment::create($commentData);
-        CreateCommentProcessed::dispatch(new CommentResource($comment));
-        return response()->json();
     }
 }

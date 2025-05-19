@@ -1,0 +1,45 @@
+<?php
+
+namespace App\Services;
+
+use App\DTO\CreateCommentDTO;
+use App\Events\CreateCommentProcessed;
+use App\Http\Resources\CommentResource;
+use App\Models\Comment;
+use App\Wrappers\CommentLengthAwarePaginatorWrapper;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Storage;
+
+class CommentService
+{
+    public function __construct()
+    {
+    }
+
+    public function getPaginatedRootComments(): LengthAwarePaginator
+    {
+        $paginator = Comment::whereNull('parent_id')
+            ->latest()
+            ->paginate(5);
+
+        return CommentLengthAwarePaginatorWrapper::fromBaseClass($paginator);
+    }
+
+    public function getPaginatedChildrenComments(Comment $comment): LengthAwarePaginator
+    {
+        $paginator = $comment->children()->latest()->paginate(2);
+        return CommentLengthAwarePaginatorWrapper::fromBaseClass($paginator);
+    }
+
+    public function createComment(CreateCommentDTO $commentDTO)
+    {
+        $commentData = $commentDTO->getFields();
+        if (!empty($commentDTO->attachment)) {
+            $storePath = $commentDTO->attachment->storePublicly(path: 'attachments', options: 'public');
+            $commentData['file_path'] = $storePath;
+        }
+
+        $comment = Comment::create($commentData);
+        CreateCommentProcessed::dispatch(new CommentResource($comment));
+    }
+}

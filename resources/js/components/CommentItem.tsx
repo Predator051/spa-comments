@@ -13,28 +13,31 @@ export interface Paginated<T> {
         label: string;
         active: boolean;
     }[];
+    per_page: number;
+    next_page_url: string | null;
 }
 
 export default function CommentItem(comment: Comment) {
-    const [childPages, setChildPages] = useState<Record<number, number | null>>({});
+    const [loadedChildCount, setLoadedChildCount] = useState(0);
+    const [loadMoreChildrenUrl, setLoadMoreChildrenUrl] = useState('');
     const { controller, addComment } = useCommentStore();
     const node = controller.findCommentById(comment.id);
 
     if (!node) return null;
 
     const loadChildren = async (parentId: number) => {
-        const page = childPages[parentId] ?? 1;
-        const response = await axios.get<Paginated<Comment>>(`/comments/${parentId}/children?page=${page}`);
+        const loadLink = loadMoreChildrenUrl.length == 0 ? `/comments/${parentId}/children?page=${0}` : loadMoreChildrenUrl;
+        const response = await axios.get<Paginated<Comment>>(loadLink);
         const data = response.data;
 
         for (const comment of data.data) {
             addComment(comment);
         }
 
-        setChildPages((prev) => ({
-            ...prev,
-            [parentId]: data.links.some((link) => link.label === 'Next' && link.url) ? page + 1 : null,
-        }));
+        console.log(data);
+        setLoadMoreChildrenUrl(data.next_page_url ?? '');
+
+        setLoadedChildCount(loadedChildCount + response.data.per_page)
     };
 
     const isImage = (file: string): boolean => /\.(jpg|jpeg|png|gif)$/i.test(file);
@@ -107,9 +110,9 @@ export default function CommentItem(comment: Comment) {
                     <CommentItem key={c.id} {...c}></CommentItem>
                 ))}
 
-                {childPages[comment.id] !== null && (
+                {comment.children_count !== null && comment.children_count > 0 && comment.children_count > loadedChildCount && (
                     <button className="text-sm text-blue-600 hover:underline dark:text-blue-400" onClick={() => loadChildren(comment.id)}>
-                        Загрузить ещё ответы
+                        Загрузить ещё ответы ({loadedChildCount} of {comment.children_count})
                     </button>
                 )}
             </div>

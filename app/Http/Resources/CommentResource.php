@@ -21,7 +21,8 @@ class CommentResource extends JsonResource
             'updated_at' => $this->updated_at,
             'parent_id' => intval($this->parent_id),
             'file_url' => $this->file_url,
-            'file_path' => $this->file_path
+            'file_path' => $this->file_path,
+            'children_count' => Comment::find($this->id)->children->count()
         ];
     }
 }

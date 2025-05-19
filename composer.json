@@ -15,7 +15,9 @@
         "laravel/reverb": "^1.0",
         "laravel/tinker": "^2.10.1",
         "predis/predis": "^3.0",
-        "tightenco/ziggy": "^2.4"
+        "tightenco/ziggy": "^2.4",
+        "ext-libxml": "*",
+        "ext-dom": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

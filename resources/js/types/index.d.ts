@@ -12,4 +12,5 @@ export interface Comment {
     parent_id: number | null;
     file_path: string | null;
     file_url: string | null;
+    children_count: number | null;
 }
