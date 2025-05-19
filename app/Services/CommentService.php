@@ -12,7 +12,7 @@ use Storage;
 
 class CommentService
 {
-    public function __construct()
+    public function __construct(private readonly int $paginateCount = 25)
     {
     }
 
@@ -20,14 +20,14 @@ class CommentService
     {
         $paginator = Comment::whereNull('parent_id')
             ->latest()
-            ->paginate(5);
+            ->paginate($this->paginateCount);
 
         return CommentLengthAwarePaginatorWrapper::fromBaseClass($paginator);
     }
 
     public function getPaginatedChildrenComments(Comment $comment): LengthAwarePaginator
     {
-        $paginator = $comment->children()->latest()->paginate(2);
+        $paginator = $comment->children()->latest()->paginate($this->paginateCount);
         return CommentLengthAwarePaginatorWrapper::fromBaseClass($paginator);
     }
 

@@ -1,13 +1,17 @@
 // useCommentStore.ts
 import { create } from 'zustand';
 import { CommentTreeController } from '@/lib/CommentTreeController';
-import { Comment } from '@/types';
+import { Comment, SortTypes } from '@/types';
 
 type CommentStore = {
     controller: CommentTreeController;
     trigger: number;
     forceUpdate: () => void;
     addComment: (comment: Comment) => void;
+    sortKey: SortTypes;
+    sortAsc: boolean;
+    setSortKey: (newSortKey: SortTypes) => void;
+    setSortAsc: (newSortAsc: boolean) => void;
 };
 
 export const useCommentStore = create<CommentStore>((set, get) => ({
@@ -17,5 +21,13 @@ export const useCommentStore = create<CommentStore>((set, get) => ({
     addComment: (comment: Comment) => {
         get().controller.addComment(comment);
         get().forceUpdate();
+    },
+    sortKey: 'created_at',
+    sortAsc: true,
+    setSortKey: (newSortKey: SortTypes) => {
+        set(() => ({ sortKey: newSortKey }))
+    },
+    setSortAsc: (newSortAsc: boolean) => {
+        set(() => ({ sortAsc: newSortAsc }));
     }
 }));

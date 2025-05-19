@@ -13,4 +13,7 @@ export interface Comment {
     file_path: string | null;
     file_url: string | null;
     children_count: number | null;
+    created_at: string;
 }
+
+export type SortTypes = 'username' | 'user_email' | 'created_at'

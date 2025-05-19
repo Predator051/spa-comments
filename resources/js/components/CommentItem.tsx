@@ -5,6 +5,8 @@ import { useCommentStore } from '@/hooks/use-comment-store';
 import ReplyCommentDialog from '@/components/ReplyCommentDialog';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import * as React from 'react';
+import UserInfoHoverCard from '@/components/UserInfoHoverCard';
+import { motion } from 'framer-motion';
 
 export interface Paginated<T> {
     data: T[];
@@ -36,8 +38,7 @@ export default function CommentItem(comment: Comment) {
 
         console.log(data);
         setLoadMoreChildrenUrl(data.next_page_url ?? '');
-
-        setLoadedChildCount(loadedChildCount + response.data.per_page)
+        setLoadedChildCount(loadedChildCount + response.data.per_page);
     };
 
     const isImage = (file: string): boolean => /\.(jpg|jpeg|png|gif)$/i.test(file);
@@ -66,14 +67,27 @@ export default function CommentItem(comment: Comment) {
     };
 
     return (
-        <div key={comment.id} className="rounded-2xl border bg-white p-5 shadow-sm dark:border-[#2c2c2c] dark:bg-[#1c1c1c]">
+        <motion.div
+            key={comment.id}
+            initial={{ opacity: 0, x: comment.id % 2 === 0 ? -50 : 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
+            className="rounded-2xl border bg-white p-5 shadow-sm dark:border-[#2c2c2c] dark:bg-[#1c1c1c]"
+        >
             <div className="flex items-start justify-between">
                 <div className="flex items-center gap-4">
                     <Avatar>
                         <AvatarImage alt={`@${comment.username}`} />
                         <AvatarFallback>{comment.username?.charAt(0).toUpperCase() || 'U'}</AvatarFallback>
                     </Avatar>
-                    <span className="font-semibold text-indigo-600 dark:text-indigo-400">{comment.username}</span>
+                    <UserInfoHoverCard
+                        comment={comment}
+                        triggerElement={
+                            <span className="cursor-pointer font-semibold text-indigo-600 underline-offset-4 transition hover:text-indigo-500 hover:underline dark:text-indigo-400 dark:hover:text-indigo-300">
+                                {comment.username}
+                            </span>
+                        }
+                    />
                 </div>
                 <ReplyCommentDialog comment={comment}></ReplyCommentDialog>
             </div>
@@ -87,11 +101,7 @@ export default function CommentItem(comment: Comment) {
             {comment.file_url && (
                 <div className="mt-3">
                     {isImage(comment.file_url) ? (
-                        <img
-                            src={comment.file_url}
-                            alt="comment attachment"
-                            className="max-w-xs rounded-lg border dark:border-neutral-700"
-                        />
+                        <img src={comment.file_url} alt="comment attachment" className="max-w-xs rounded-lg border dark:border-neutral-700" />
                     ) : isText(comment.file_url) ? (
                         <a
                             href={comment.file_url}
@@ -116,6 +126,6 @@ export default function CommentItem(comment: Comment) {
                     </button>
                 )}
             </div>
-        </div>
+        </motion.div>
     );
 }

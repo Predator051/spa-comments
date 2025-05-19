@@ -1,5 +1,5 @@
 
-import { Comment } from '@/types';
+import { Comment, SortTypes } from '@/types';
 
 export interface CommentNode extends Comment {
     children: CommentNode[];
@@ -54,5 +54,23 @@ export class CommentTreeController {
 
     findCommentById(id: number): CommentNode | null {
         return this.findNode(id);
+    }
+
+    getSortedTree(key: SortTypes, asc: boolean): CommentNode[] {
+        const sortFn = (a: CommentNode, b: CommentNode): number => {
+            const valA = key === 'created_at' ? new Date(a[key]).getTime() : a[key].toLowerCase();
+            const valB = key === 'created_at' ? new Date(b[key]).getTime() : b[key].toLowerCase();
+            if (valA < valB) return asc ? -1 : 1;
+            if (valA > valB) return asc ? 1 : -1;
+            return 0;
+        };
+
+        const deepSort = (nodes: CommentNode[]): CommentNode[] =>
+            [...nodes]
+                .sort(sortFn)
+                .map((n) => ({ ...n, children: deepSort(n.children) }));
+
+        this.rootComments = deepSort(this.rootComments);
+        return this.rootComments;
     }
 }
