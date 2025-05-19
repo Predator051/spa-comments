@@ -35,9 +35,9 @@ export default function Home() {
     return (
         <div className="min-h-screen bg-gradient-to-b from-white via-gray-50 to-white p-6 text-gray-800 dark:from-[#0a0a0a] dark:to-[#111] dark:text-gray-100">
             <div className="mx-auto max-w-2xl space-y-6">
-                <h1 className="text-center text-3xl font-bold">💬 Комментарии</h1>
+                <h1 className="text-center text-3xl font-bold">💬 Comments</h1>
                 <div className="mb-4 flex flex-wrap items-center justify-center gap-3 text-sm">
-                    <span className="text-gray-700 dark:text-gray-300">Сортировка:</span>
+                    <span className="text-gray-700 dark:text-gray-300">Sort by:</span>
                     <button
                         onClick={() => {
                             setSortKey('username');
@@ -47,7 +47,7 @@ export default function Home() {
                             sortKey === 'username' ? 'bg-blue-600 text-white' : 'bg-gray-200 hover:bg-gray-300 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:text-white'
                         }`}
                     >
-                        Имя {sortKey === 'username' && (sortAsc ? '↑' : '↓')}
+                        Name {sortKey === 'username' && (sortAsc ? '↑' : '↓')}
                     </button>
                     <button
                         onClick={() => {
@@ -70,7 +70,7 @@ export default function Home() {
                             sortKey === 'created_at' ? 'bg-blue-600 text-white' : 'bg-gray-200 hover:bg-gray-300 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:text-white'
                         }`}
                     >
-                        Дата {sortKey === 'created_at' && (sortAsc ? '↑' : '↓')}
+                        Date {sortKey === 'created_at' && (sortAsc ? '↑' : '↓')}
                     </button>
                 </div>
 

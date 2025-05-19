@@ -8,11 +8,10 @@ use App\Http\Resources\CommentResource;
 use App\Models\Comment;
 use App\Wrappers\CommentLengthAwarePaginatorWrapper;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Storage;
 
-class CommentService
+readonly class CommentService
 {
-    public function __construct(private readonly int $paginateCount = 25)
+    public function __construct(private int $paginateCount = 25)
     {
     }
 

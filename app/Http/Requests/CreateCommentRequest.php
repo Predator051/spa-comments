@@ -25,7 +25,7 @@ class CreateCommentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'parent_id' => 'nullable|integer|min:0',
+            'parent_id' => 'nullable|integer|min:1',
             'text' => [
                 'required',
                 function ($attribute, $value, $fail) {
@@ -46,7 +46,7 @@ class CreateCommentRequest extends FormRequest
                     }
                 }
             ],
-            'user_email' => 'nullable|email|max:255',
+            'user_email' => 'required|email|max:255',
             'username' => ['required', 'regex:/^[a-zA-Z0-9]+$/'],
             'user_home_page_url' => ['nullable', 'url', 'starts_with:http://,https://'],
             'attachment' => [

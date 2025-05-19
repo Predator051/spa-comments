@@ -109,7 +109,7 @@ export default function CommentItem(comment: Comment) {
                             rel="noopener noreferrer"
                             className="inline-block rounded border border-dashed border-gray-400 bg-gray-100 px-3 py-2 text-sm text-gray-800 hover:bg-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700"
                         >
-                            📄 Открыть текстовый файл
+                            📄 Open plain text file
                         </a>
                     ) : null}
                 </div>
@@ -122,7 +122,7 @@ export default function CommentItem(comment: Comment) {
 
                 {comment.children_count !== null && comment.children_count > 0 && comment.children_count > loadedChildCount && (
                     <button className="text-sm text-blue-600 hover:underline dark:text-blue-400" onClick={() => loadChildren(comment.id)}>
-                        Загрузить ещё ответы ({loadedChildCount} of {comment.children_count})
+                        Load more replies ({loadedChildCount} of {comment.children_count})
                     </button>
                 )}
             </div>

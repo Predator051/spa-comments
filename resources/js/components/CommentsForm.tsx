@@ -161,11 +161,11 @@ export default function CommentForm({parent_id, onSubmit}: {parent_id?: number, 
                 className="space-y-6 rounded-2xl border bg-white p-6 shadow-lg dark:border-neutral-800 dark:bg-neutral-900"
                 encType="multipart/form-data"
             >
-                <h3 className="text-xl font-bold text-neutral-800 dark:text-white">Оставить комментарий</h3>
+                <h3 className="text-xl font-bold text-neutral-800 dark:text-white">Reply</h3>
 
                 <div className="grid grid-cols-1 gap-4">
                     <div>
-                        <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-200">Имя *</label>
+                        <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-200">Name *</label>
                         <input
                             type="text"
                             name="userName"
@@ -189,7 +189,7 @@ export default function CommentForm({parent_id, onSubmit}: {parent_id?: number, 
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-200">Сайт</label>
+                        <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-200">Home page url</label>
                         <input
                             type="url"
                             name="homepage"
@@ -201,7 +201,7 @@ export default function CommentForm({parent_id, onSubmit}: {parent_id?: number, 
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-200">Комментарий *</label>
+                        <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-200">Text *</label>
 
                         <div className="mb-2 flex gap-2">
                             {ALLOWED_TAGS.map(tag => (
@@ -225,7 +225,7 @@ export default function CommentForm({parent_id, onSubmit}: {parent_id?: number, 
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-200">Вложение</label>
+                        <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-200">Attachment</label>
                         <input
                             type="file"
                             accept=".jpg,.jpeg,.png,.gif,.txt"
@@ -257,7 +257,7 @@ export default function CommentForm({parent_id, onSubmit}: {parent_id?: number, 
                         type="submit"
                         className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-6 py-2 text-sm font-medium text-white transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 dark:ring-offset-neutral-900"
                     >
-                        Отправить
+                        Send
                     </button>
                 </div>
             </form>

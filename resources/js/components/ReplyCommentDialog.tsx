@@ -22,12 +22,12 @@ export default function (props: { comment: Comment }) {
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 <Button variant="outline" onClick={() => setOpen(true)}>
-                    Ответить
+                    Reply
                 </Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Ответить {props.comment.username}</DialogTitle>
+                    <DialogTitle>Reply to {props.comment.username}</DialogTitle>
                     <Separator></Separator>
                     <DialogDescription>
                         <ScrollArea className="h-20 w-115 rounded-md border">{props.comment.text}</ScrollArea>
