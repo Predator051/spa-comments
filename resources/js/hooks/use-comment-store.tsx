@@ -23,7 +23,7 @@ export const useCommentStore = create<CommentStore>((set, get) => ({
         get().forceUpdate();
     },
     sortKey: 'created_at',
-    sortAsc: true,
+    sortAsc: false,
     setSortKey: (newSortKey: SortTypes) => {
         set(() => ({ sortKey: newSortKey }))
     },

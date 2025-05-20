@@ -27,6 +27,11 @@ class CommentController extends Controller
         ]);
     }
 
+    public function rootPaginate(): JsonResponse
+    {
+        return response()->json($this->commentService->getPaginatedRootComments());
+    }
+
     public function children(Comment $comment): JsonResponse
     {
         return response()->json($this->commentService->getPaginatedChildrenComments($comment));

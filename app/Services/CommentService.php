@@ -18,7 +18,8 @@ readonly class CommentService
     public function getPaginatedRootComments(): LengthAwarePaginator
     {
         $paginator = Comment::whereNull('parent_id')
-            ->latest()
+            ->orWhere('parent_id', '=', 0)
+            ->latest('id')
             ->paginate($this->paginateCount);
 
         return CommentLengthAwarePaginatorWrapper::fromBaseClass($paginator);
@@ -26,7 +27,7 @@ readonly class CommentService
 
     public function getPaginatedChildrenComments(Comment $comment): LengthAwarePaginator
     {
-        $paginator = $comment->children()->latest()->paginate($this->paginateCount);
+        $paginator = $comment->children()->latest('created_at')->paginate($this->paginateCount);
         return CommentLengthAwarePaginatorWrapper::fromBaseClass($paginator);
     }
 

@@ -13,17 +13,36 @@ import {
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Comment } from '@/types';
-import { useState } from 'react';
+import { ReactNode, useState } from 'react';
 
-export default function (props: { comment: Comment }) {
+export default function (props: { comment?: Comment, trigger?: ReactNode }) {
     const [open, setOpen] = useState(false);
+
+    if (props.comment == null) {
+        props.comment = {
+            children_count: null,
+            created_at: '',
+            file_path: '',
+            file_url: '',
+            id: -1,
+            parent_id: null,
+            text: '',
+            user_email: '',
+            user_home_page_url: '',
+            username: '',
+        };
+    }
+
+    if (!props.comment) {
+        return;
+    }
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button variant="outline" onClick={() => setOpen(true)}>
+                {props.trigger ?? <Button variant="outline" onClick={() => setOpen(true)}>
                     Reply
-                </Button>
+                </Button>}
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>

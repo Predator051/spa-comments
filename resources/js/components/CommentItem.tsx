@@ -17,6 +17,7 @@ export interface Paginated<T> {
     }[];
     per_page: number;
     next_page_url: string | null;
+    total: number;
 }
 
 export default function CommentItem(comment: Comment) {
@@ -36,7 +37,6 @@ export default function CommentItem(comment: Comment) {
             addComment(comment);
         }
 
-        console.log(data);
         setLoadMoreChildrenUrl(data.next_page_url ?? '');
         setLoadedChildCount(loadedChildCount + response.data.per_page);
     };
@@ -83,11 +83,15 @@ export default function CommentItem(comment: Comment) {
                     <UserInfoHoverCard
                         comment={comment}
                         triggerElement={
-                            <span className="cursor-pointer font-semibold text-indigo-600 underline-offset-4 transition hover:text-indigo-500 hover:underline dark:text-indigo-400 dark:hover:text-indigo-300">
+                            <span
+                                className="cursor-pointer font-semibold text-indigo-600 underline-offset-4 transition hover:text-indigo-500 hover:underline dark:text-indigo-400 dark:hover:text-indigo-300">
                                 {comment.username}
                             </span>
                         }
                     />
+                </div>
+                <div className="text-xs text-gray-500 dark:text-gray-400">
+                    {new Date(comment.created_at).toLocaleString()}
                 </div>
                 <ReplyCommentDialog comment={comment}></ReplyCommentDialog>
             </div>
@@ -101,7 +105,8 @@ export default function CommentItem(comment: Comment) {
             {comment.file_url && (
                 <div className="mt-3">
                     {isImage(comment.file_url) ? (
-                        <img src={comment.file_url} alt="comment attachment" className="max-w-xs rounded-lg border dark:border-neutral-700" />
+                        <img src={comment.file_url} alt="comment attachment"
+                             className="max-w-xs rounded-lg border dark:border-neutral-700" />
                     ) : isText(comment.file_url) ? (
                         <a
                             href={comment.file_url}
@@ -121,7 +126,8 @@ export default function CommentItem(comment: Comment) {
                 ))}
 
                 {comment.children_count !== null && comment.children_count > 0 && comment.children_count > loadedChildCount && (
-                    <button className="text-sm text-blue-600 hover:underline dark:text-blue-400" onClick={() => loadChildren(comment.id)}>
+                    <button className="text-sm text-blue-600 hover:underline dark:text-blue-400"
+                            onClick={() => loadChildren(comment.id)}>
                         Load more replies ({loadedChildCount} of {comment.children_count})
                     </button>
                 )}
