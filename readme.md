@@ -52,16 +52,30 @@ docker-compose build
 docker-compose up -d
 ```
 
-### 3. Run Laravel Migrations
+### 3. Install dependencies
+
+```bash
+docker exec -it laravel_app composer install
+docker exec -it laravel_node npm i
+```
+
+### 4. Run Laravel Migrations
 
 ```bash
 docker exec -it laravel_app php artisan migrate
 ```
 
-### 4. Build Frontend Assets
+### 5. Build Frontend Assets
 
 ```bash
 docker exec -it laravel_node sh -c "cd /var/www && npm run build"
+```
+
+### 6. Set permissions
+
+```bash
+chown -R www-data:www-data storage bootstrap/cache
+chmod -R 775 storage bootstrap/cache
 ```
 
 ---
