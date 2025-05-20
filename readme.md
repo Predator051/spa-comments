@@ -104,20 +104,18 @@ http://localhost:8001
 
 * **Fields:**
 
-    * `User Name` – required; only Latin letters/numbers; validated both client- and server-side.
+    * `User Name` – required; only Latin letters/numbers.
     * `E-mail` – required; must be valid email format.
     * `Home Page` – optional; must be a valid URL if present.
-    * `CAPTCHA` – required; either Google reCAPTCHA or custom text CAPTCHA (Latin letters/numbers).
+    * `CAPTCHA` – required.
     * `Text` – required; allows tags: `<a></a>`, `<code></code>`, `<i></i>`, `<strong></strong>`; all others are escaped; output is valid XHTML.
 
 ### 2. Main Page
 
 * Displays **cascade (nested) comments**, unlimited depth.
 * Top-level comments shown in a table with:
-
     * Sorting by: `User Name`, `E-mail`, `Date` (asc/desc)
     * Pagination: 25 comments/page
-* Styled with **Tailwind CSS**, responsive layout encouraged.
 
 ### 3. File Uploads
 
