@@ -15,7 +15,7 @@ import { Separator } from '@/components/ui/separator';
 import { Comment } from '@/types';
 import { ReactNode, useState } from 'react';
 
-export default function (props: { comment?: Comment, trigger?: ReactNode }) {
+export default function (props: { comment?: Comment; trigger?: ReactNode }) {
     const [open, setOpen] = useState(false);
 
     if (props.comment == null) {
@@ -40,17 +40,20 @@ export default function (props: { comment?: Comment, trigger?: ReactNode }) {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                {props.trigger ?? <Button variant="outline" onClick={() => setOpen(true)}>
-                    Reply
-                </Button>}
+                {props.trigger ?? (
+                    <Button variant="outline" onClick={() => setOpen(true)}>
+                        Reply
+                    </Button>
+                )}
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Reply to {props.comment.username}</DialogTitle>
-                    <Separator></Separator>
-                    <DialogDescription>
-                        <ScrollArea className="h-20 w-115 rounded-md border">{props.comment.text}</ScrollArea>
-                    </DialogDescription>
+                    {props.comment.username && <DialogTitle>Reply to {props.comment.username}</DialogTitle> && <Separator></Separator>}
+                    {props.comment.text && (
+                        <DialogDescription>
+                            <ScrollArea className="h-20 w-115 rounded-md border">{props.comment.text}</ScrollArea>
+                        </DialogDescription>
+                    )}
                     <Separator></Separator>
                 </DialogHeader>
                 <ScrollArea className="h-100 w-120">
