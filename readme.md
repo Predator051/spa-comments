@@ -71,11 +71,29 @@ docker exec -it laravel_app php artisan migrate
 docker exec -it laravel_node sh -c "cd /var/www && npm run build"
 ```
 
-### 6. Set permissions
+### 6. Set permissions (if you see error with permissions)
 
 ```bash
 chown -R www-data:www-data storage bootstrap/cache
 chmod -R 775 storage bootstrap/cache
+```
+
+### 7. Create symbol link
+
+```bash
+docker exec -it laravel_app php artisan storage:link
+```
+
+### 8. Remove hot file
+
+```bash
+rm public/hot
+```
+
+### 8. In browser enter to
+
+```bash
+http://localhost:8001
 ```
 
 ---
